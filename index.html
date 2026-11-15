@@ -1122,13 +1122,14 @@ function stepFliers(dt) {
 }
 function stepBoss(dt) {
   if (levelNo !== 4 || state !== 'play') return;
-  // Если ребёнок пробежал мимо злодея, портал возвращает его перед игроком у арены.
+  // Пропущенные злодеи возвращаются по одному: без долгого возврата и толпы у барьера.
   const leadX = Math.max(pls[0].P.x, twoP ? pls[1].P.x : 0);
   if (bossStage === 0 && leadX > LEVEL.arenaGate - 880) {
-    let slot = 0;
-    for (const e of enemies) if (e.alive && !e.recalled && e.x < leadX - 210) {
-      e.x = Math.min(LEVEL.arenaGate - 230, leadX + 110 + slot++ * 100);
-      e.min = e.x - 35; e.max = e.x + 35; e.recalled = true;
+    const nearby = enemies.some(e => e.alive && e.x >= leadX - 210 && e.x < leadX + 300);
+    const e = !nearby && enemies.find(e => e.alive && e.x < leadX - 210);
+    if (e) {
+      e.x = Math.min(LEVEL.arenaGate - 230, leadX + 110);
+      e.min = e.x - 35; e.max = e.x + 35;
       crumbs(e.x + e.w / 2, GY - 65, 10, 150, ['#a0edff','#f4b5ee','#fff1ae']);
     }
   }
