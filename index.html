@@ -35,6 +35,7 @@ button { font-family: inherit; }
 .clay.light svg { color: var(--cream); filter: drop-shadow(0 3px 0 rgba(42, 22, 89, .55)); }
 .pink { --c1: #ff9ac7; --c2: #ff6fae; --c3: #c2417f; }
 .mint { --c1: #8af0cb; --c2: #5fe3b5; --c3: #2fa882; }
+.blue { --c1: #9be9ff; --c2: #58bdf3; --c3: #2a72b8; }
 .lav { --c1: #b48cf0; --c2: #8a5bd6; --c3: #5a3a9e; }
 .dim { --c1: #6b5a8f; --c2: #53456f; --c3: #3a2e52; }
 
@@ -152,12 +153,13 @@ button { font-family: inherit; }
 #touch .clay { opacity: .8; }
 #btnB::after { inset: -4px; }
 #btnTank { right: calc(var(--sr) + var(--A) + var(--B) + 18px); bottom: var(--sb); width: clamp(54px, 17vh, 78px); height: clamp(54px, 17vh, 78px); --h: 7px; }
+#btnSword { right: calc(var(--sr) + var(--A) + 10px); bottom: var(--sb); width: clamp(52px, 15vh, 72px); height: clamp(52px, 15vh, 72px); --h: 7px; }
 #bossPlate { position: absolute; left: 50%; top: calc(var(--st) + 50px); transform: translateX(-50%); min-width: 165px; padding: 5px 12px; border-radius: 18px; background: rgba(24,15,65,.75); color: #fff8e5; font-size: 18px; font-weight: 900; text-align: center; text-shadow: 0 2px 2px #150f3d; box-shadow: 0 0 0 2px rgba(255,255,255,.35); }
 .act svg { width: 52%; height: 52%; }
 .hint { animation: hint .8s ease-in-out infinite; }
 @keyframes hint { 50% { scale: 1.06; filter: brightness(1.15); } }
 #wrap:not([data-state="play"]) #touch, #wrap:not([data-state="play"]) #hud, #wrap:not([data-state="play"]) #pauseBtn { display: none; }
-#wrap.kidmode #btnB, #wrap.kidmode #hearts { display: none; }
+#wrap.kidmode #btnB, #wrap.kidmode #btnSword, #wrap.kidmode #hearts { display: none; }
 #wrap.kidmode #starPlate { top: var(--st); }
 
 #rot { position: relative; width: clamp(110px, 40vmin, 170px); aspect-ratio: 1.8; margin-bottom: clamp(40px, 14vmin, 80px); }
@@ -225,8 +227,9 @@ button { font-family: inherit; }
       <div id="btnL" class="clay lav light" role="button" aria-label="Влево"></div>
       <div id="btnR" class="clay lav light" role="button" aria-label="Вправо"></div>
     </div>
-    <div id="btnB" class="act clay pink" aria-label="Конфетти" role="button"></div>
+    <div id="btnB" class="act clay pink" aria-label="Стрелять" role="button"></div>
     <div id="btnA" class="act clay mint" aria-label="Прыжок" role="button"></div>
+    <div id="btnSword" class="act clay blue" aria-label="Синий меч" role="button" hidden></div>
     <div id="btnTank" class="act clay lav light" aria-label="Войти или выйти из танка" role="button" hidden></div>
   </div>
 
@@ -387,7 +390,7 @@ const ICON = {
 $('playBtn').innerHTML = ICON.play; $('againBtn').innerHTML = ICON.play; $('resumeBtn').innerHTML = ICON.play;
 $('nextBtn').innerHTML = ICON.play + '<i class="nb">2</i>'; $('nextBtn').style.color = 'var(--ink)';
 $('btnL').innerHTML = ICON.left; $('btnR').innerHTML = ICON.right;
-$('btnA').innerHTML = ICON.up; $('btnB').innerHTML = ICON.star;
+$('btnA').innerHTML = ICON.up; $('btnB').innerHTML = ICON.star; $('btnSword').innerHTML = ICON.sword;
 $('btnTank').innerHTML = ICON.tank;
 $('pauseBtn').innerHTML = ICON.pause + '<svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" pathLength="100"/></svg>';
 for (const id of ['homeBtn', 'homeBtn2']) $(id).innerHTML = ICON.home + '<svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" pathLength="100"/></svg>';
@@ -433,7 +436,7 @@ const L2 = {
   checkpoints: [2150, 3650, 5750],
   springs: [3880],
   ground: [[0, 1000], [1130, 1430], [1560, 1860], [1990, 2330], [3530, 4150], [4980, 5900], [6350, 8050]],
-  platforms: [[380, 360, 150], [580, 290, 150], [780, 360, 140], [1020, 400, 90], [1875, 400, 90], [2390, 370, 150], [2640, 290, 150], [2860, 225, 140], [3070, 290, 150], [3290, 360, 150], [3960, 270, 200], [4230, 380, 120], [4420, 320, 120], [4610, 380, 120], [4800, 320, 120], [5100, 360, 150], [5990, 380, 120], [6160, 330, 120], [6600, 350, 150], [6840, 290, 150], [7400, 360, 160]],
+  platforms: [[380, 360, 150], [580, 290, 150], [780, 360, 140], [1020, 400, 90], [1875, 400, 90], [2390, 370, 150], [2615, 290, 150], [2825, 245, 140], [3070, 290, 150], [3290, 360, 150], [3960, 270, 200], [4230, 380, 120], [4420, 320, 120], [4610, 380, 120], [4800, 320, 120], [5100, 360, 150], [5990, 380, 120], [6160, 330, 120], [6600, 350, 150], [6840, 290, 150], [7400, 360, 160]],
   /* гусеницы: ['puff'|'hop', x, minX, maxX] ; ['tongue', x] */
   enemies: [["puff", 620, 520, 780], ["hop", 1320, 1250, 1400], ["puff", 1750, 1680, 1830], ["hop", 3790, 3760, 3830], ["tongue", 5250], ["puff", 5500, 5380, 5600], ["puff", 6720, 6560, 6900], ["tongue", 7330]],
   /* летуны: ['fblue', x, y, minX, maxX] ; ['forange', x, y, радиус] ; ['fred', x, y] ; ['fgreen', x, y, minX, maxX] */
@@ -459,7 +462,7 @@ const L3 = {
     [5190, 415, 155], [5510, 355, 170], [6020, 335, 170], [6500, 355, 170],
     [6920, 320, 180]
   ],
-  /* ['villain', номер Figma, x, minX, maxX, 'walk'|'hop']; ['tank', x, minX, maxX] */
+  /* ['villain', номер Figma, x, minX, maxX, 'walk'|'hop']; танки — транспорт отдельно */
   enemies: [
     ['villain', 1, 690, 610, 770, 'walk'],
     ['villain', 4, 1190, 1110, 1280, 'hop'],
@@ -494,9 +497,9 @@ const L4 = {
   springs: [2730, 4930],
   ground: [[0, 1580], [1690, 3310], [3430, 5110], [5230, 8720]],
   platforms: [
-    [350, 350, 170], [680, 300, 155], [1060, 365, 160], [1530, 410, 145],
-    [1880, 330, 165], [2320, 375, 165], [2700, 315, 160], [3120, 410, 150],
-    [3610, 350, 170], [3980, 290, 160], [4370, 355, 160], [4900, 300, 165],
+    [350, 350, 170], [680, 300, 155], [1060, 365, 160], [1530, 410, 205],
+    [1880, 330, 165], [2320, 375, 165], [2700, 315, 160], [3260, 410, 215],
+    [3610, 350, 170], [3980, 290, 160], [4370, 355, 160], [5070, 410, 210],
     [5500, 350, 160], [5920, 320, 170], [6300, 355, 160], [6680, 320, 170],
     [7060, 350, 170], [7460, 340, 160]
   ],
@@ -516,7 +519,7 @@ const L4 = {
     ['fuglet', 3830, 310, 3700, 3970], ['fuglet', 4640, 285, 4520, 4800],
     ['fuglet', 5280, 315, 5170, 5400]
   ],
-  rideTanks: [1040, 1220],
+  rideTanks: [1040, 1220, 5300, 5420],
   arenaGate: 7860,
   seventh: ['villain', 21, 7560, 7490, 7680, 'dash'],
   octopus: { x: 7700, hp: 7 },
@@ -633,7 +636,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) { res
 
 /* ---------- Ввод ---------- */
 const keys = new Set();
-const touch = { axis: 0, jump: false, fire: false };
+const touch = { axis: 0, jump: false, fire: false, sword: false };
 const mkP = () => ({ x: 0, y: 0, w: 44, h: 80, vx: 0, vy: 0, ground: false, face: 1, fs: 1, inv: 0, coyote: 0, buf: 0, fireCd: 0, prevBottom: 0, jt: 0, sq: 0, sqv: 0 });
 let hero2 = 1; { const v = parseInt(LS.get('sh_hero2', '1'), 10); if (v >= 0 && v < HERO_DATA.length) hero2 = v; }
 const pls = [{ id: 1, P: mkP(), hero: heroIdx, safe: { x: 100, y: 300 }, jw: false, jl: false }, { id: 2, P: mkP(), hero: hero2, safe: { x: 150, y: 300 }, jw: false, jl: false }];
@@ -657,7 +660,7 @@ document.addEventListener('contextmenu', e => e.preventDefault());
 
 $('touch').hidden = !isTouch;
 if (isTouch) $('keyHint').hidden = true;
-const rail = $('rail'), btnL = $('btnL'), btnR = $('btnR'), btnA = $('btnA'), btnB = $('btnB');
+const rail = $('rail'), btnL = $('btnL'), btnR = $('btnR'), btnA = $('btnA'), btnB = $('btnB'), btnSword = $('btnSword');
 let rid = null;
 function railAxis(e) {
   const r = rail.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), ax = Math.abs(dx) < 6 ? 0 : Math.sign(dx);
@@ -668,14 +671,14 @@ rail.addEventListener('pointermove', e => { if (e.pointerId === rid) railAxis(e)
 ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => rail.addEventListener(n, e => { if (e.pointerId === rid) { rid = null; touch.axis = 0; btnL.classList.remove('on'); btnR.classList.remove('on'); } }));
 function bindBtn(el, key, cnt) {
   let pid = null;
-  el.addEventListener('pointerdown', e => { if (pid !== null) return; pid = e.pointerId; try { el.setPointerCapture(pid); } catch (x) {} initAudio(); touch[key] = true; if (key === 'jump') pls[0].jl = true; pressN[cnt]++; el.classList.add('on'); el.classList.remove('hint'); e.preventDefault(); });
+  el.addEventListener('pointerdown', e => { if (pid !== null) return; pid = e.pointerId; try { el.setPointerCapture(pid); } catch (x) {} initAudio(); touch[key] = true; if (key === 'jump') pls[0].jl = true; if (cnt) pressN[cnt]++; el.classList.add('on'); el.classList.remove('hint'); e.preventDefault(); });
   const up = e => { if (e.pointerId === pid) { pid = null; touch[key] = false; el.classList.remove('on'); } };
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => el.addEventListener(n, up));
   el._reset = () => { pid = null; touch[key] = false; el.classList.remove('on'); };
 }
-bindBtn(btnA, 'jump', 'a'); bindBtn(btnB, 'fire', 'b');
+bindBtn(btnA, 'jump', 'a'); bindBtn(btnB, 'fire', 'b'); bindBtn(btnSword, 'sword', null);
 $('btnTank').addEventListener('pointerdown', e => { e.preventDefault(); initAudio(); if (state === 'play' && levelNo >= 3) toggleTank(pls[0]); });
-function resetTouch() { touch.axis = 0; touch.jump = touch.fire = false; rid = null; btnL.classList.remove('on'); btnR.classList.remove('on'); btnA._reset(); btnB._reset(); }
+function resetTouch() { touch.axis = 0; touch.jump = touch.fire = touch.sword = false; rid = null; btnL.classList.remove('on'); btnR.classList.remove('on'); btnA._reset(); btnB._reset(); btnSword._reset(); }
 
 /* удержание 1 с с кольцом: защита от случайных нажатий */
 function holdBtn(el, ms, cb) {
@@ -711,7 +714,7 @@ function refreshPicks() {
   $('slot2').hidden = !two; $('slot1').classList.toggle('cur', slot === 1); $('slot2').classList.toggle('cur', slot === 2);
   $('start').classList.toggle('two', two);
   $('keyHint').innerHTML = two ? '<span>1: ← → ↑ Пробел</span><span>2: A D W S</span>' : '<span>← →  ходить</span><span>↑  прыжок</span><span>Пробел  конфетти</span>';
-  if (levelSel >= 3) $('keyHint').innerHTML = two ? '<span>1: ← → ↑ Пробел E</span><span>2: A D W S Q</span>' : '<span>← → ходить</span><span>↑ прыгать</span><span>Пробел бой</span><span>E танк</span>';
+  if (levelSel >= 3) $('keyHint').innerHTML = two ? '<span>1: ← → ↑ Пробел</span><span>↓ меч · E танк</span><span>2: A D W S</span><span>Shift меч · Q танк</span>' : '<span>← → ходить · ↑ прыгать</span><span>Пробел стрелять</span><span>↓ меч · E танк</span>';
   $('modeBtn').innerHTML = two ? ICON2 : ICON1; $('modeBtn').setAttribute('aria-pressed', String(two));
 }
 const FACE = (x, c) => '<circle cx="' + x + '" cy="16" r="8.5" fill="' + c + '"/><circle cx="' + (x - 3) + '" cy="14.5" r="1.3" fill="#2a1659"/><circle cx="' + (x + 3) + '" cy="14.5" r="1.3" fill="#2a1659"/><path d="M' + (x - 3.5) + ' 18.8q3.5 3 7 0" stroke="#2a1659" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
@@ -742,7 +745,7 @@ $('slot2').addEventListener('click', () => { if (modeIsTwo()) { slot = 2; refres
 $('modeBtn').addEventListener('click', () => { initAudio(); LS.set('sh_2p', modeIsTwo() ? '0' : '1'); slot = 1; refreshPicks(); showPrev(false); sfx.ding(); });
 if (isTouch) $('modeBtn').hidden = true;
 Object.assign($('lvlBtn').style, { left: 'auto', bottom: 'auto', right: 'var(--sr)', top: 'var(--st)' });
-function lvlRefresh() { $('lvlBtn').innerHTML = '<b>' + levelSel + '</b>'; $('lvlBtn').setAttribute('aria-label', 'Уровень ' + levelSel); for (let n = 1; n <= 4; n++) { $('lvl' + n).classList.toggle('sel', levelSel === n); $('lvl' + n).setAttribute('aria-pressed', String(levelSel === n)); } }
+function lvlRefresh() { $('lvlBtn').innerHTML = '<b>' + levelSel + '</b>'; $('lvlBtn').setAttribute('aria-label', 'Уровень ' + levelSel); for (let n = 1; n <= 4; n++) { $('lvl' + n).classList.toggle('sel', levelSel === n); $('lvl' + n).setAttribute('aria-pressed', String(levelSel === n)); } refreshPicks(); }
 function pickLevel(n) {
   if (state !== 'title') return; initAudio(); if (n === levelSel) { sfx.tap(); return; }
   levelSel = n; LS.set('sh_lvl', levelSel); setLevel(levelSel); buildLevel(); resetPlayer();
@@ -782,8 +785,9 @@ function setState(s) { state = s; wrap.dataset.state = s; }
 function toggleTank(pl) {
   if (levelNo < 3 || state !== 'play') return;
   const q = pl.P;
-  if (q.tank) { q.tank.x = q.x + q.w / 2; q.tank.driver = null; q.tank = null; q.hasSword = true; q.inv = Math.max(q.inv, .5); if (pl.id === 1) { $('btnB').innerHTML = ICON.sword; $('btnB').setAttribute('aria-label', 'Синий меч'); } sfx.ding(); return; }
-  const t = rideTanks.find(t => !t.driver && Math.abs(t.x - q.x - q.w / 2) < 105 && Math.abs(q.y + q.h - GY) < 55);
+  if (q.tank) { const t = q.tank; t.x = q.x + q.w / 2; t.home = t.x; t.min = t.x - 46; t.max = t.x + 46; t.driver = null; q.tank = null; q.hasSword = true; q.inv = Math.max(q.inv, .5); sfx.ding(); return; }
+  const t = rideTanks.filter(t => !t.driver && Math.abs(t.x - q.x - q.w / 2) < 175 && Math.abs(q.y + q.h - GY) < 85)
+    .sort((a,b) => Math.abs(a.x - q.x - q.w / 2) - Math.abs(b.x - q.x - q.w / 2))[0];
   if (t) { t.driver = pl; q.tank = t; q.inv = Math.max(q.inv, .5); sfx.ding(); crumbs(t.x, GY - 40, 8, 130, ['#77f2d2','#79c9f4','#fff3b0']); }
 }
 
@@ -810,10 +814,10 @@ function buildLevel() {
     return f;
   });
   bullets = []; tankShots = []; parts = []; flies = []; flyS = []; trail = [];
-  rideTanks = (LEVEL.rideTanks || []).map(x => ({ x, driver: null })); bossStage = 0; octopus = null; bossShots = []; fartDone = false;
+  rideTanks = (LEVEL.rideTanks || []).map((x, i) => ({ x, home: x, min: x - 46, max: x + 46, dir: i % 2 ? -1 : 1, phase: i * 1.7, driver: null })); bossStage = 0; octopus = null; bossShots = []; fartDone = false;
 }
 function resetPlayer() {
-  pls.forEach((pl, i) => { const q = pl.P; q.x = LEVEL.start.x + i * 52; q.y = LEVEL.start.y - q.h; q.vx = q.vy = 0; q.face = 1; q.fs = 1; q.inv = 0; q.sq = q.sqv = 0; q.jt = 0; q.tank = null; q.hasSword = false; q.swing = 0; pl.safe = { x: q.x, y: q.y }; pl.jw = false; pl.jl = false; });
+  pls.forEach((pl, i) => { const q = pl.P; q.x = LEVEL.start.x + i * 52; q.y = LEVEL.start.y - q.h; q.vx = q.vy = 0; q.face = 1; q.fs = 1; q.inv = 0; q.sq = q.sqv = 0; q.jt = 0; q.tank = null; q.hasSword = false; q.swing = q.swordCd = 0; pl.safe = { x: q.x, y: q.y }; pl.jw = false; pl.jl = false; });
   cp = { x: LEVEL.checkpoint, y: GY, active: false, pop: 0 };
   cps = LEVEL.checkpoints.map(x => ({ x, active: false, pop: 0 }));
 }
@@ -825,7 +829,7 @@ function restart() {
   hint.rOn = hint.r < 3; if (hint.rOn) { hint.r++; LS.set('sh_hr', hint.r); } hint.aDone = hint.a >= 3 || pressN.a >= 2; hint.bDone = hint.b >= 3 || pressN.b >= 2; hint.aT = hint.bT = 0;
   $('win').hidden = true; $('pause').hidden = true; $('winBtns').classList.remove('ready'); $('nextBtn').hidden = levelNo >= 4; $('nextBtn').setAttribute('aria-label', 'Уровень ' + (levelNo + 1)); $('winBtns').classList.toggle('hasnext', levelNo < 4);
   $('nextBtn').innerHTML = ICON.play + '<i class="nb">' + (levelNo + 1) + '</i>';
-  $('btnTank').hidden = levelNo < 3 || !isTouch; $('btnB').innerHTML = levelNo === 4 ? ICON.sword : ICON.star; $('btnB').setAttribute('aria-label', levelNo === 4 ? 'Синий меч' : 'Конфетти');
+  $('btnTank').hidden = true; $('btnSword').hidden = true; $('btnB').innerHTML = ICON.star; $('btnB').setAttribute('aria-label', 'Стрелять');
   $('bossPlate').hidden = true;
   buildHud(); hudUpdate(true); $('bead').style.backgroundImage = 'url(' + HERO_DATA[heroIdx] + ')'; $('bead2').style.backgroundImage = 'url(' + HERO_DATA[hero2] + ')';
   setState('play');
@@ -916,7 +920,7 @@ function hurt(fromX) {
     pls.forEach((q, i) => { q.P.x = (cp.active ? cp.x - 20 : LEVEL.start.x) + i * 44; q.P.y = (cp.active ? cp.y : LEVEL.start.y) - q.P.h; q.P.vx = q.P.vy = 0; q.P.inv = 2; q.safe = { x: q.P.x, y: q.P.y }; });
   }
 }
-const ov = (ax, ay, aw, ah, bx, by, bw, bh) => ax < bx + bw && ax + aw > bx && ay < by + ah && ay + ah > by;
+const ov = (ax, ay, aw, ah, bx, by, bw, bh) => ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 const hb = () => [P.x + 8, P.y + 14, P.w - 16, P.h - 18];                  // боксы урона меньше рисунка: прощающие для ребёнка
 function landed(vyIn, p) {
   const amp = Math.max(0.1, Math.min(0.26, vyIn / 1100));
@@ -944,22 +948,24 @@ function aimShot(cx, Pp) {
   return { x: cx + ux * 26, y: Pp.y + 30 + uy * 26, vx: ux * 480, vy: uy * 480 };
 }
 function ctrl(pl) {
-  let axis, jumpNow, fireNow;
+  let axis, jumpNow, fireNow, swordNow;
   if (pl.id === 1) {
     const l = keys.has('ArrowLeft') || (!twoP && keys.has('KeyA')), r = keys.has('ArrowRight') || (!twoP && keys.has('KeyD'));
     axis = (r ? 1 : 0) - (l ? 1 : 0);
     if (Math.abs(touch.axis) > Math.abs(axis)) axis = touch.axis;
     jumpNow = keys.has('ArrowUp') || (!twoP && keys.has('KeyW')) || touch.jump;
-    fireNow = keys.has('Space') || keys.has('KeyZ') || keys.has('KeyX') || keys.has('KeyF') || touch.fire;
+    fireNow = keys.has('Space') || keys.has('KeyZ') || touch.fire;
+    swordNow = keys.has('ArrowDown') || keys.has('KeyX') || touch.sword;
   } else {
     axis = (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0); jumpNow = keys.has('KeyW'); fireNow = keys.has('KeyS');
+    swordNow = keys.has('ShiftLeft') || keys.has('KeyF');
   }
-  return { axis, jumpNow, fireNow };
+  return { axis, jumpNow, fireNow, swordNow };
 }
 function stepPlayer(pl, dt) {
   P = pl.P;
-  const c = ctrl(pl); let axis = c.axis, jumpNow = c.jumpNow, fireNow = c.fireNow;
-  if (state === 'win') { axis = 0; jumpNow = false; fireNow = false; }
+  const c = ctrl(pl); let axis = c.axis, jumpNow = c.jumpNow, fireNow = c.fireNow, swordNow = c.swordNow;
+  if (state === 'win') { axis = 0; jumpNow = false; fireNow = swordNow = false; }
   const jumpEdge = (jumpNow && !pl.jw) || pl.jl; pl.jw = jumpNow; pl.jl = false;
   if (state !== 'play' && state !== 'win') return;
   const wasGround = P.ground;
@@ -976,10 +982,9 @@ function stepPlayer(pl, dt) {
   P.inv = Math.max(0, P.inv - dt);
 
   P.x = Math.max(0, Math.min(LW - P.w, P.x + P.vx * dt));
-  if (levelNo === 4 && bossStage < 3) P.x = Math.min(P.x, LEVEL.arenaGate - P.w - 14);
-  if (levelNo === 4 && bossStage === 2 && octopus && octopus.alive) P.x = Math.min(P.x, octopus.x - P.w - 40);
-  if (P.tank) P.tank.x = P.x + P.w / 2;
+  if (levelNo === 4 && bossStage < 3) P.x = Math.min(P.x, LEVEL.octopus.x - P.w - 40, LEVEL.arenaGate - P.w - 14);
   if (twoP && state === 'play') P.x = Math.max(camX + 4, Math.min(camX + W - P.w - 4, P.x));   // вдвоём: никто не уходит за экран
+  if (P.tank) P.tank.x = P.x + P.w / 2;
   P.prevBottom = P.y + P.h;
   const vyIn = P.vy;
   P.y += P.vy * dt;
@@ -1006,15 +1011,20 @@ function stepPlayer(pl, dt) {
   P.swing = Math.max(0, (P.swing || 0) - dt);
 
   if (state === 'play') {
-    // стрельба конфетти (в режиме «Малыш» стреляет само)
+    // Стрельба всегда остаётся дальним действием. Меч имеет отдельную кнопку и свой откат.
     P.fireCd = Math.max(0, P.fireCd - dt);
-    if (kid && !fireNow) { for (const f of fliers) if (f.alive && Math.abs(f.x - cx) < ((levelNo === 4 || P.hasSword) && !P.tank ? 105 : 300) && f.y < P.y + 5 && f.y > P.y - 280) { fireNow = true; break; } }
-    if (kid && !fireNow) { for (const e of enemies) { const dx = (e.x + e.w / 2) - cx; if (e.alive && dx * P.face > 20 && dx * P.face < ((levelNo === 4 || P.hasSword) && !P.tank ? 110 : 280) && Math.abs(e.y - P.y) < 150) { fireNow = true; break; } } }
-    if (kid && !fireNow && levelNo === 4 && bossStage === 2 && octopus && Math.abs(octopus.x + 90 - cx) < 125) fireNow = true;
+    P.swordCd = Math.max(0, (P.swordCd || 0) - dt);
+    if (kid && !fireNow) { for (const f of fliers) if (f.alive && Math.abs(f.x - cx) < 300 && f.y < P.y + 5 && f.y > P.y - 280) { fireNow = true; break; } }
+    if (kid && !fireNow) { for (const e of enemies) { const dx = (e.x + e.w / 2) - cx; if (e.alive && dx * P.face > 20 && dx * P.face < 280 && Math.abs(e.y - P.y) < 150) { fireNow = true; break; } } }
+    if (kid && !fireNow && levelNo === 4 && bossStage === 2 && octopus && Math.abs(octopus.x + 90 - cx) < 290) fireNow = true;
+    if (kid && !swordNow && !P.tank && (levelNo === 4 || P.hasSword)) {
+      swordNow = enemies.some(e => e.alive && Math.abs(e.x + e.w / 2 - (cx + P.face * 65)) < 68) ||
+        (bossStage === 2 && octopus && Math.abs(octopus.x + 90 - (cx + P.face * 65)) < 112);
+    }
+    if (swordNow && !P.tank && (levelNo === 4 || P.hasSword) && P.swordCd <= 0) { swordStrike(pl); P.swordCd = kid ? .48 : .34; }
     if (fireNow && P.fireCd <= 0) {
-      if ((levelNo === 4 || P.hasSword) && !P.tank) { swordStrike(pl); P.fireCd = kid ? .43 : .32; }
-      else { const sh = aimShot(cx, P); bullets.push({ x: sh.x, y: sh.y, vx: sh.vx, vy: sh.vy, life: 0.75, r: 0, bubble: levelNo === 4 }); P.fireCd = kid ? 0.8 : 0.34; sfx.pop(); vib(8);
-        if (levelNo === 4 && P.tank && bossStage === 2 && octopus && octopus.appear === 0 && Math.abs(octopus.x + 90 - cx) < 210 && P.face * (octopus.x + 90 - cx) > 0) hitOctopus(); }
+      const sh = aimShot(cx, P); bullets.push({ x: sh.x, y: sh.y, vx: sh.vx, vy: sh.vy, life: 0.75, r: 0, bubble: levelNo === 4 }); P.fireCd = kid ? 0.8 : 0.34; sfx.pop(); vib(8);
+      if (levelNo === 4 && P.tank && bossStage === 2 && octopus && octopus.appear === 0 && Math.abs(octopus.x + 90 - cx) < 210 && P.face * (octopus.x + 90 - cx) > 0) hitOctopus();
     }
     // чекпоинт и финиш
     for (const c of cps) if (!c.active && P.x > c.x - 30) { c.active = true; c.pop = 0.25; cp = { x: c.x, y: GY, active: true, pop: 0 }; hearts = MAXH; sfx.flag(); vib(30); crumbs(c.x, GY - 70, 10, 260, ['#8af0cb', '#5fe3b5', '#fff7e6']); crumbs(c.x, GY - 70, 16, 300); }
@@ -1112,6 +1122,16 @@ function stepFliers(dt) {
 }
 function stepBoss(dt) {
   if (levelNo !== 4 || state !== 'play') return;
+  // Если ребёнок пробежал мимо злодея, портал возвращает его перед игроком у арены.
+  const leadX = Math.max(pls[0].P.x, twoP ? pls[1].P.x : 0);
+  if (bossStage === 0 && leadX > LEVEL.arenaGate - 880) {
+    let slot = 0;
+    for (const e of enemies) if (e.alive && !e.recalled && e.x < leadX - 210) {
+      e.x = Math.min(LEVEL.arenaGate - 230, leadX + 110 + slot++ * 100);
+      e.min = e.x - 35; e.max = e.x + 35; e.recalled = true;
+      crumbs(e.x + e.w / 2, GY - 65, 10, 150, ['#a0edff','#f4b5ee','#fff1ae']);
+    }
+  }
   if (bossStage === 0 && enemies.every(e => !e.alive)) {
     bossStage = 1; enemies.push(makeEnemy(LEVEL.seventh)); sfx.warn(); crumbs(LEVEL.seventh[2], GY - 65, 22, 230, ['#ee9ded','#8dd8f3','#fff1ae']);
   } else if (bossStage === 1 && enemies.every(e => !e.alive)) {
@@ -1142,12 +1162,26 @@ function stepBoss(dt) {
   P = pls[0].P; bossShots = bossShots.filter(s => s.life > 0);
   const lead = Math.max(pls[0].P.x, twoP ? pls[1].P.x : 0);
   $('bossPlate').hidden = lead < LEVEL.enemies[0][2] - 250 || bossStage === 3;
-  if (!$('bossPlate').hidden) $('bossPlate').textContent = bossStage === 0 ? 'Злодеи: ' + enemies.filter(e => !e.alive).length + '/6' : bossStage === 1 ? 'Седьмой злодей!' : 'Осьминог: ' + '♥'.repeat(Math.max(0, octopus.hp));
+  if (!$('bossPlate').hidden) $('bossPlate').textContent = bossStage === 0 ? 'Злодеи: ' + enemies.filter(e => !e.alive).length + '/6' : bossStage === 1 ? 'Седьмой злодей — слева!' : 'Осьминог: ' + '♥'.repeat(Math.max(0, octopus.hp));
+}
+function stepRideTanks(dt) {
+  if (levelNo < 3 || state !== 'play') return;
+  for (const t of rideTanks) if (!t.driver) {
+    t.x += t.dir * 60 * dt;
+    if (t.x < t.min) { t.x = t.min; t.dir = 1; }
+    if (t.x > t.max) { t.x = t.max; t.dir = -1; }
+  }
 }
 function update(dt) {
   T += dt;
+  stepRideTanks(dt);
   for (const pl of (twoP ? pls : [pls[0]])) stepPlayer(pl, dt);
   P = pls[0].P;
+  if (isTouch && state === 'play') {
+    const q = pls[0].P;
+    $('btnSword').hidden = !(levelNo >= 3 && !q.tank && (levelNo === 4 || q.hasSword));
+    $('btnTank').hidden = !(levelNo >= 3 && (q.tank || rideTanks.some(t => !t.driver && Math.abs(t.x - q.x - q.w / 2) < 170 && Math.abs(q.y + q.h - GY) < 85)));
+  }
 
   if (state === 'win') {
     winTimer += dt; pls.forEach(q => { q.P.vx *= 0.9; }); rocketLaunch = Math.max(0, winTimer - IGN);
@@ -1579,22 +1613,38 @@ function drawVillain(e) {
 function drawRideTank(t) {
   const q = t.driver && t.driver.P, x = (q ? q.x + q.w / 2 : t.x) - camX;
   if (x < -140 || x > W + 140) return;
-  const feet = q ? q.y + q.h + 5 : GY + 5, dir = q ? q.face : 1;
+  const feet = q ? q.y + q.h + 5 : GY + 5 + Math.sin(T * 6 + t.phase) * 2, dir = q ? q.face : t.dir;
   shadow(x, GY + 4, 118, 10, .34);
-  ctx.save(); ctx.translate(x, feet); ctx.scale(dir, 1);
+  ctx.save(); ctx.translate(x, feet); ctx.scale(dir, 1); ctx.shadowColor = '#bff8ff'; ctx.shadowBlur = 12;
   ctx.fillStyle = '#423767'; rr(-62,-25,124,28,13); ctx.fill();
   ctx.fillStyle = '#2c2757'; rr(-55,-21,110,21,10); ctx.fill();
   for (let i = -3; i <= 3; i++) { ctx.fillStyle = '#dbc9ee'; ctx.beginPath(); ctx.arc(i * 15,-11,6,0,7); ctx.fill(); }
   ctx.fillStyle = '#57c9ae'; rr(-55,-63,110,44,16); ctx.fill();
+  ctx.strokeStyle = '#e6ffff'; ctx.lineWidth = 3; rr(-55,-63,110,44,16); ctx.stroke();
   ctx.fillStyle = '#a4f5d6'; rr(-49,-60,98,14,7); ctx.fill();
   ctx.fillStyle = '#4988c6'; rr(21,-56,49,10,5); ctx.fill();
   ctx.fillStyle = '#e6c77e'; rr(-20,-76,42,15,8); ctx.fill();
+  ctx.shadowBlur = 0; ctx.fillStyle = '#2176bf'; ctx.beginPath(); ctx.arc(-24,-41,13,0,7); ctx.fill();
+  ctx.fillStyle = '#fffef0'; ctx.font = '900 19px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('★',-24,-40);
   ctx.restore();
   if (q) {
     const hs = heroSpr(t.driver.hero);
     if (hs) { ctx.save(); ctx.beginPath(); ctx.ellipse(x, feet - 72, 22, 24, 0, 0, 7); ctx.clip(); ctx.drawImage(hs.cv, x - hs.w * .31, feet - 108, hs.w * .62, hs.h * .62); ctx.restore(); }
     ctx.fillStyle = '#ffe3a2'; ctx.beginPath(); ctx.ellipse(x, feet - 60, 28, 6, 0, 0, 7); ctx.fill();
     if (twoP) { ctx.fillStyle = t.driver.id === 1 ? '#ff7aae' : '#79d1ff'; ctx.beginPath(); ctx.arc(x, feet - 107, 10, 0, 7); ctx.fill(); ctx.fillStyle = '#2a1659'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '900 12px Nunito, sans-serif'; ctx.fillText(String(t.driver.id), x, feet - 106); }
+  }
+}
+function drawTankPrompts() {
+  if (levelNo < 3 || state !== 'play') return;
+  for (const pl of (twoP ? pls : [pls[0]])) {
+    const q = pl.P, t = q.tank || rideTanks.filter(v => !v.driver).sort((a,b) => Math.abs(a.x-q.x) - Math.abs(b.x-q.x))[0];
+    if (!t || (!q.tank && (Math.abs(t.x - q.x - q.w / 2) > 175 || Math.abs(q.y + q.h - GY) > 85))) continue;
+    const x = t.x - camX, y = (q.tank ? q.y + q.h : GY) - 105 - (twoP && pl.id === 2 ? 28 : 0);
+    const label = isTouch ? (q.tank ? 'Выйти из танка' : 'Сесть в танк') : (pl.id === 1 ? 'E' : 'Q') + (q.tank ? ' — выйти' : ' — сесть');
+    ctx.font = '900 16px Nunito, sans-serif'; const w = ctx.measureText(label).width + 22;
+    ctx.fillStyle = 'rgba(35,35,87,.9)'; rr(x - w/2,y-22,w,31,14); ctx.fill();
+    ctx.strokeStyle = '#bff8ff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#fff9dc'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label,x,y-6);
   }
 }
 function drawOctopus() {
@@ -1653,7 +1703,12 @@ function drawCat(e) {
 }
 function drawFlier(f) {
   const x0 = f.x - camX; if (x0 < -140 || x0 > W + 140) return;
-  if (f.kind === 'fuglet') { ctx.save(); ctx.globalAlpha = f.alive ? 1 : Math.max(0, 1 - f.dead / .34); fishShape(x0, f.y, 29, '#ffd56c', f.dir); ctx.fillStyle = '#f48b9d'; ctx.beginPath(); ctx.ellipse(x0, f.y - 10, 10, 5, 0, 0, 7); ctx.fill(); ctx.restore(); return; }
+  if (f.kind === 'fuglet') { ctx.save(); ctx.globalAlpha = f.alive ? 1 : Math.max(0, 1 - f.dead / .34);
+    for (let i=1;i<=3;i++) { ctx.fillStyle='rgba(251,101,170,'+(0.35-i*.08)+')'; ctx.beginPath(); ctx.arc(x0-f.dir*(32+i*18),f.y+Math.sin(T*9+i)*4,8-i,0,7); ctx.fill(); }
+    ctx.shadowColor='#61226e'; ctx.shadowBlur=13; fishShape(x0, f.y, 29, '#ff8c5c', f.dir); ctx.shadowBlur=0;
+    ctx.strokeStyle='#4b255f'; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(x0, f.y, 30, 17, 0, 0, 7); ctx.stroke();
+    ctx.fillStyle='#ad2d71'; ctx.beginPath(); ctx.moveTo(x0-8,f.y-10);ctx.lineTo(x0,f.y-26);ctx.lineTo(x0+8,f.y-10);ctx.fill();
+    ctx.fillStyle='#542451'; ctx.beginPath(); ctx.arc(x0+f.dir*11,f.y-5,3,0,7);ctx.fill(); ctx.restore(); return; }
   const swapF = levelNo === 2, FLC = { fblue: 'hop', fgreen: 'puff', forange: 'tongue', fred: 'red' };
   const sp = swapF ? spr(FLC[f.kind], 104, 0, { pad: 4 }) : spr(f.kind + '_' + (((T * 8 + f.ph) | 0) % 2 ? 'up' : 'down'), 84, 0, { pad: 4 }); if (!sp) return;
   let sx = 1, sy = 1, ox = 0, alpha = 1;
@@ -1744,9 +1799,10 @@ function render() {
   for (const s of stars) if (!s.got) drawStar(s);
   for (const e of enemies) if ((e.alive || e.dead < 0.34) && !(state === 'win' && Math.abs(e.x + e.w / 2 - LEVEL.finish) < 520)) drawCat(e);
   for (const f of fliers) if ((f.alive || f.dead < 0.34) && !(state === 'win' && Math.abs(f.x - LEVEL.finish) < 520)) drawFlier(f);
-  if (levelNo >= 3) for (const t of rideTanks) drawRideTank(t);
+  if (levelNo >= 3) { for (const t of rideTanks) drawRideTank(t); drawTankPrompts(); }
   if (levelNo === 4) {
     drawOctopus();
+    if (bossStage < 2) { const x = LEVEL.octopus.x - 40 - camX; if (x > -40 && x < W + 40) { ctx.fillStyle = 'rgba(250,116,201,.2)'; rr(x - 10, 112, 20, GY - 112, 10); ctx.fill(); ctx.strokeStyle = '#ffc7ee'; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = '#fff9dc'; ctx.font = '900 18px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('Сначала злодеи',x,GY-240); } }
     if (bossStage < 3) { const x = LEVEL.arenaGate - camX; if (x > -40 && x < W + 40) { ctx.fillStyle = 'rgba(102,231,245,.25)'; rr(x - 12, 100, 24, GY - 100, 10); ctx.fill(); ctx.strokeStyle = '#b7faff'; ctx.lineWidth = 4; ctx.stroke(); for (let y = 120; y < GY; y += 37) { ctx.fillStyle = '#d6ffff'; ctx.beginPath(); ctx.arc(x, y + Math.sin(T * 3 + y) * 4, 4, 0, 7); ctx.fill(); } } }
     for (const s of bossShots) { const x = s.x - camX; ctx.fillStyle = '#a878df'; ctx.beginPath(); ctx.arc(x, s.y, 11, 0, 7); ctx.fill(); ctx.fillStyle = '#e5d0ff'; ctx.beginPath(); ctx.arc(x - 3, s.y - 4, 3, 0, 7); ctx.fill(); }
   }
